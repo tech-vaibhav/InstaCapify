@@ -1,6 +1,8 @@
 # InstaCapify
---
+
 ## 📁 Project Structure
+
+```
 InstaCapify/
 │
 ├── main.py                      # Entry point for FastAPI app
@@ -13,6 +15,6 @@ InstaCapify/
 ├── services/                    # All core logic / third-party APIs
 │   └── gemini_service.py        # Logic to interact with Gemini API
 │
-└── utils/                       # (Optional) helper functions, validations, etc
-    └── image_utils.py           # (optional) if needed for image pre-processing
------------
+└── utils/                       # Helper functions, validations, etc
+    └── image_utils.py           # Image pre-processing utilities
+```
