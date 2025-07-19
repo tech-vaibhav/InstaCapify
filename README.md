@@ -1,0 +1,18 @@
+# InstaCapify
+--
+## 📁 Project Structure
+InstaCapify/
+│
+├── main.py                      # Entry point for FastAPI app
+├── requirements.txt             # Python dependencies
+├── .gitignore                   # Ignore untracked files
+│
+├── routes/                      # All API route definitions
+│   └── caption_route.py         # Route to handle caption generation
+│
+├── services/                    # All core logic / third-party APIs
+│   └── gemini_service.py        # Logic to interact with Gemini API
+│
+└── utils/                       # (Optional) helper functions, validations, etc
+    └── image_utils.py           # (optional) if needed for image pre-processing
+-----------
