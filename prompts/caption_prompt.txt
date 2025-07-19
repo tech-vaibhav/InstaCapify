@@ -19,11 +19,14 @@ REQUIREMENTS:
 
 OUTPUT:
 Return your response strictly in the following JSON format, no markdowns:
-```json
-{
+
+OUTPUT:
+Return your response strictly in the following JSON format, no markdowns:
+
+{{
   "captions": [
     "caption 1",
     "caption 2",
     "caption 3"
   ]
-}
+}}

@@ -8,9 +8,9 @@ from fastapi import HTTPException
 
 # Load environment variables
 load_dotenv()
-
 # Initialize Gemini client with API key
 api_key = os.getenv("GEMINI_API_KEY")
+print("🔑 Loaded API Key:", api_key)
 if not api_key:
     raise ValueError("Missing GEMINI_API_KEY in .env file")
 
