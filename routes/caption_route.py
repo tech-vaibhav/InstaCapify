@@ -4,6 +4,8 @@ import traceback
 from fastapi import APIRouter, UploadFile, File, Form, HTTPException
 from fastapi.responses import JSONResponse
 from services.gemini_service import generate_caption
+from services.db import SessionLocal
+from services.models import Post
 
 router = APIRouter()
 
@@ -40,6 +42,37 @@ async def generate_caption_endpoint(
 
     try:
         response = await generate_caption(prompt, image_bytes, mime_type)
-        return {"captions": response}
+        
+        captions = response.get("captions", [])
+        normalized_mood = response.get("normalized_mood", "chill")
+        
+        # ✅ Save request + captions to Neon DB
+        async with SessionLocal() as session:
+            new_post = Post(
+                raw_mood=mood,
+                normalized_mood=normalized_mood,
+                style=style,
+                country=country,
+                language=language,
+                captions=response,
+                image_url=image.filename  # optional, right now just filename
+            )
+            session.add(new_post)
+            await session.commit()
+            await session.refresh(new_post)
+            
+        # Return both captions + post_id
+        return {
+            "post_id": new_post.id,
+            "captions": response,
+            "params": {
+                "raw_mood": mood,
+                "normalized_mood": normalized_mood,
+                "style": style,
+                "country": country,
+                "language": language
+            }
+        }
+
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) 

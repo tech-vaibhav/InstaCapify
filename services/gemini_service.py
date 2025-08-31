@@ -1,5 +1,6 @@
 import os
 import json
+import re
 import traceback
 from google import genai
 from google.genai import types
@@ -45,16 +46,18 @@ async def generate_caption(prompt: str, image_bytes: bytes, mime_type: str) -> s
         print("=== RAW GEMINI RESPONSE ===")
         print(response.text)
         
+        clean_text = re.sub(r"^```(?:json)?|```$", "", response.text.strip(), flags=re.MULTILINE).strip()
+        
+        return json.loads(clean_text)
         # Try parsing Gemini response as JSON
-        try:
-            return json.loads(response.text.strip())
-        except json.JSONDecodeError:
-            raise HTTPException(
-                status_code=500,
-                detail="Gemini returned an invalid JSON response."
-            )
-
+        
+    except json.JSONDecodeError as e:
+        print("❌ JSON parse failed:", e)
+        raise HTTPException(
+            status_code=500,
+            detail=f"Gemini returned an invalid JSON response: {e}"
+        )
     except Exception as e:
         print("❌ Gemini API error occurred:")
-        traceback.print_exc() 
+        traceback.print_exc()
         raise HTTPException(status_code=500, detail=f"Gemini API error: {str(e)}")

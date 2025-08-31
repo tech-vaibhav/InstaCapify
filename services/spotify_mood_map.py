@@ -7,6 +7,5 @@ mood_to_playlist = {
     "party": "Dance Party",
     "energetic": "Beast Mode",
     "relax": "Lo-Fi Chill",
-    "trending-india": "Top 50 - India",
-    "trending-global": "Top 50 - Global"
+    "normal": "Top 50 - India"
 }
