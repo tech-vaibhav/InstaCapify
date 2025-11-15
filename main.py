@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from routes.caption_route import router as caption_router
 from routes import music_route
 from services.db import engine, Base
@@ -14,6 +15,13 @@ app = FastAPI(
 app.include_router(caption_router, prefix="/api/caption")
 app.include_router(music_route.router)
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:4200"],  # Angular dev server
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.on_event("startup")
 async def on_startup():

@@ -1,10 +1,11 @@
 import os
 import json
 import traceback
-from fastapi import APIRouter, UploadFile, File, Form, HTTPException
+from fastapi import Depends,APIRouter, UploadFile, File, Form, HTTPException
+from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi.responses import JSONResponse
 from services.gemini_service import generate_caption
-from services.db import SessionLocal
+from services.db import get_db
 from services.models import Post
 
 router = APIRouter()
@@ -15,7 +16,8 @@ async def generate_caption_endpoint(
     style: str = Form(...),
     country: str = Form(...),
     language: str = Form(...),
-    image: UploadFile = File(...)
+    image: UploadFile = File(...),
+    db: AsyncSession = Depends(get_db)
 ):
     print("📩 Caption endpoint hit")
 
@@ -47,19 +49,19 @@ async def generate_caption_endpoint(
         normalized_mood = response.get("normalized_mood", "chill")
         
         # ✅ Save request + captions to Neon DB
-        async with SessionLocal() as session:
-            new_post = Post(
-                raw_mood=mood,
-                normalized_mood=normalized_mood,
-                style=style,
-                country=country,
-                language=language,
-                captions=response,
-                image_url=image.filename  # optional, right now just filename
-            )
-            session.add(new_post)
-            await session.commit()
-            await session.refresh(new_post)
+        new_post = Post(
+            raw_mood=mood,
+            normalized_mood=normalized_mood,
+            style=style,
+            country=country,
+            language=language,
+            captions=response,
+            image_url=image.filename  # optional, right now just filename
+        )
+        
+        db.add(new_post)
+        await db.commit()
+        await db.refresh(new_post)
             
         # Return both captions + post_id
         return {
