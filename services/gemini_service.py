@@ -38,8 +38,7 @@ async def generate_caption(prompt: str, image_bytes: bytes, mime_type: str) -> s
             ],
             config=types.GenerateContentConfig(
                 # Optional: you can configure temperature, etc.
-                temperature=0.7,
-                thinking_config=types.ThinkingConfig(thinking_budget=0)  # Optional
+                temperature=0.7  # Optional
             )
         )
         
